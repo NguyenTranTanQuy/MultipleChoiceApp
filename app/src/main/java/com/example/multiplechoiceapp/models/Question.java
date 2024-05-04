@@ -3,7 +3,7 @@ package com.example.multiplechoiceapp.models;
 import java.util.List;
 
 public class Question {
-    private String questionCode;
+    private Long questionID;
     private String questionContent;
     private String answer;
 
@@ -14,8 +14,8 @@ public class Question {
     public Question() {
     }
 
-    public Question(String questionCode, String questionContent, String answer, Topic_Set topicSet, List<Selection> selection, List<Detailed_Assignment> detailedAssignments) {
-        this.questionCode = questionCode;
+    public Question(Long questionID, String questionContent, String answer, Topic_Set topicSet, List<Selection> selection, List<Detailed_Assignment> detailedAssignments) {
+        this.questionID = questionID;
         this.questionContent = questionContent;
         this.answer = answer;
         this.topicSet = topicSet;
@@ -23,12 +23,12 @@ public class Question {
         this.detailedAssignments = detailedAssignments;
     }
 
-    public String getQuestionCode() {
-        return questionCode;
+    public Long getquestionID() {
+        return questionID;
     }
 
-    public void setQuestionCode(String questionCode) {
-        this.questionCode = questionCode;
+    public void setquestionID(Long questionID) {
+        this.questionID = questionID;
     }
 
     public String getQuestionContent() {

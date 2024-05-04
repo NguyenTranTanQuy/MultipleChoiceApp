@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 public class Assignment {
-    private String assignmentCode;
-    private Date testDate;
+    private Long assignmentID;
+    private String testDate;
     private Float score;
     private int nb_completedSentences;
     private Float duration;
@@ -15,8 +15,8 @@ public class Assignment {
     public Assignment() {
     }
 
-    public Assignment(String assignmentCode, Date testDate, Float score, int nb_completedSentences, Float duration, User user, List<Detailed_Assignment> detailedAssignments) {
-        this.assignmentCode = assignmentCode;
+    public Assignment(Long assignmentCode, String testDate, Float score, int nb_completedSentences, Float duration, User user, List<Detailed_Assignment> detailedAssignments) {
+        this.assignmentID = assignmentCode;
         this.testDate = testDate;
         this.score = score;
         this.nb_completedSentences = nb_completedSentences;
@@ -25,19 +25,19 @@ public class Assignment {
         this.detailedAssignments = detailedAssignments;
     }
 
-    public String getAssignmentCode() {
-        return assignmentCode;
+    public Long getAssignmentCode() {
+        return assignmentID;
     }
 
-    public void setAssignmentCode(String assignmentCode) {
-        this.assignmentCode = assignmentCode;
+    public void setAssignmentCode(Long assignmentCode) {
+        this.assignmentID = assignmentCode;
     }
 
-    public Date getTestDate() {
+    public String getTestDate() {
         return testDate;
     }
 
-    public void setTestDate(Date testDate) {
+    public void setTestDate(String testDate) {
         this.testDate = testDate;
     }
 

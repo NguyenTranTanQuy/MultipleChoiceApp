@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:overScrollMode="never"
     android:background="@drawable/background"
-    tools:context=".activities.OTPVerification">
+    tools:context=".activities.QUY.OTPVerification">
 
     <LinearLayout
         android:layout_width="match_parent"

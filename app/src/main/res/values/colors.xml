@@ -11,4 +11,5 @@
     <color name="right_answer">#18a62a</color>
     <color name="wrong_answer">#ff3e3e</color>
     <color name="answer">#0a9def</color>
+    <color name="search_background">#33FFFFFF</color>
 </resources>

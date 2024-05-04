@@ -22,29 +22,82 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".activities.Home"
+            android:name=".activities.THien.addTopic"
+            android:exported="false" />
+        <activity
+            android:name=".activities.THien.Home"
             android:exported="true" />
         <activity
-            android:name=".activities.OTPVerification"
+            android:name=".activities.QUY.OTPVerification"
             android:exported="true" />
         <activity
-            android:name=".activities.ForgotPassword"
+            android:name=".activities.QUY.ForgotPassword"
             android:exported="true" />
         <activity
-            android:name=".activities.Register"
+            android:name=".activities.QUY.Register"
             android:exported="true" />
         <activity
-            android:name=".activities.Loading"
+            android:name=".activities.QUY.Loading"
             android:exported="true" />
         <activity
-            android:name=".activities.Login"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:name=".activities.QUY.Login"
+            android:exported="true"></activity>
+        <activity
+            android:name=".activities.TRIEU.TopicSetActivity"
+            android:exported="true"></activity>
+        <activity
+            android:name=".activities.TRIEU.ShareActivity"
+            android:exported="true"></activity>
+        <activity
+            android:name=".activities.TRIEU.NotificationActivity"
+            android:exported="true"></activity>
+        <!-- Thu Hien -->
+        <activity
+            android:name=".activities.THien.Topic_Home"
+            android:exported="true" />
+        <activity
+            android:name=".activities.THien.Exam"
+            android:exported="true" />
+        <activity
+            android:name=".activities.THien.TopicSet"
+            android:exported="true" />
+        <activity
+            android:name=".activities.THien.SaveExamResult"
+            android:exported="true" />
+        <activity
+            android:name=".activities.THien.ExamAgain"
+            android:exported="true" />
+        <activity
+            android:name=".activities.THien.Account"
+            android:exported="true" />
+        <activity
+            android:name=".activities.THien.AccountUser"
+            android:exported="true" />
+        <activity
+            android:name=".activities.THien.UpdateUser"
+            android:exported="true" />
+        <activity
+            android:name=".activities.THien.Contruct"
+            android:exported="true" />
+        <activity
+            android:name=".activities.Hien.ChartPoint"
+            android:exported="true" />
+        <activity
+            android:name=".activities.Hien.ChartStatistic"
+            android:exported="true" />
+        <activity
+            android:name=".activities.Hien.MainActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.Hien.RatingsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.Hien.StatisticalActivity"
+            android:exported="true" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity
+            android:name=".activities.Minh.CreateTopicSetActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

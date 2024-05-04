@@ -3,7 +3,7 @@ package com.example.multiplechoiceapp.models;
 import java.util.List;
 
 public class Topic {
-    private String topicCode;
+    private Long topicID;
     private String topicName;
     private List<Topic_Set> topicSet;
     private User user;
@@ -11,19 +11,19 @@ public class Topic {
     public Topic() {
     }
 
-    public Topic(String topicCode, String topicName, List<Topic_Set> topicSet, User user) {
-        this.topicCode = topicCode;
+    public Topic(Long topicID, String topicName, List<Topic_Set> topicSet, User user) {
+        this.topicID = topicID;
         this.topicName = topicName;
         this.topicSet = topicSet;
         this.user = user;
     }
 
-    public String getTopicCode() {
-        return topicCode;
+    public Long getTopicCode() {
+        return topicID;
     }
 
-    public void setTopicCode(String topicCode) {
-        this.topicCode = topicCode;
+    public void setTopicCode(Long topicID) {
+        this.topicID= topicID;
     }
 
     public String getTopicName() {

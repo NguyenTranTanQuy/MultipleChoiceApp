@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Topic_Set {
-    private String topicSetCode;
+    private Long topicSetID;
     private String topicSetName;
     private Date created;
     private Float duration;
@@ -15,8 +15,8 @@ public class Topic_Set {
     public Topic_Set() {
     }
 
-    public Topic_Set(String topicSetCode, String topicSetName, Date created, Float duration, List<Share> share, Topic topic, List<Question> question) {
-        this.topicSetCode = topicSetCode;
+    public Topic_Set(Long topicSetID, String topicSetName, Date created, Float duration, List<Share> share, Topic topic, List<Question> question) {
+        this.topicSetID = topicSetID;
         this.topicSetName = topicSetName;
         this.created = created;
         this.duration = duration;
@@ -25,12 +25,12 @@ public class Topic_Set {
         this.question = question;
     }
 
-    public String getTopicSetCode() {
-        return topicSetCode;
+    public Long getTopicSetID() {
+        return topicSetID;
     }
 
-    public void setTopicSetCode(String topicSetCode) {
-        this.topicSetCode = topicSetCode;
+    public void setTopicSetID(Long topicSetID) {
+        this.topicSetID = topicSetID;
     }
 
     public String getTopicSetName() {

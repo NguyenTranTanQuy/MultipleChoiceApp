@@ -1,6 +1,5 @@
-package com.example.multiplechoiceapp.activities;
+package com.example.multiplechoiceapp.activities.QUY;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -12,19 +11,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.multiplechoiceapp.R;
+import com.example.multiplechoiceapp.models.User;
 import com.example.multiplechoiceapp.retrofit.AuthenticationService;
 import com.example.multiplechoiceapp.retrofit.RetrofitClient;
 import com.example.multiplechoiceapp.retrofit.models.ResultResponse;
 import com.example.multiplechoiceapp.retrofit.utils.CallbackMethod;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.multiplechoiceapp.retrofit.utils.DateDeserializer;
 import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
@@ -32,92 +33,93 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class Register extends AppCompatActivity {
+public class ForgotPassword extends AppCompatActivity {
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private EditText edtUsername, edtPassword, edtReEnterPW, edtPhoneNumber;
-    private Button btnSignUp;
-    private TextView tvSignIn;
+    private EditText edtUsername, edtPhoneNumber, edtPassword, edtReEnterPW;
+    private Button btnVerify;
+
+    private TextView tvSignIn, tvRegister;
     private String username, password, phoneNumber;
     private String countryCode = "+84";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_forgot_password);
+
         setControl();
     }
 
-    public void onSignUp(View v) {
-        if (v.getId() == R.id.btnSignUp) {
+    public void onVerify(View v) {
+        if (v.getId() == R.id.btnVerify) {
             username = edtUsername.getText().toString();
             password = edtPassword.getText().toString();
             String reEnterPW = edtReEnterPW.getText().toString();
             phoneNumber = edtPhoneNumber.getText().toString();
 
             if(username.trim().equals("")) {
-                Toast.makeText(Register.this, "Vui lòng nhập tài khoản", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ForgotPassword.this, "Vui lòng nhập tài khoản", Toast.LENGTH_SHORT).show();
                 edtUsername.setError("Nhập tài khoản");
                 edtUsername.requestFocus();
                 return;
             }
 
             if(password.trim().equals("")) {
-                Toast.makeText(Register.this, "Vui lòng nhập mật khẩu", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ForgotPassword.this, "Vui lòng nhập mật khẩu", Toast.LENGTH_SHORT).show();
                 edtPassword.setError("Nhập mật khẩu");
                 edtPassword.requestFocus();
                 return;
             }
 
             if(reEnterPW.trim().equals("")) {
-                Toast.makeText(Register.this, "Vui lòng nhập lại mật khẩu", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ForgotPassword.this, "Vui lòng nhập lại mật khẩu", Toast.LENGTH_SHORT).show();
                 edtReEnterPW.setError("Nhập lại mật khẩu");
                 edtReEnterPW.requestFocus();
                 return;
             }
 
             if(phoneNumber.trim().equals("")) {
-                Toast.makeText(Register.this, "Vui lòng nhập SĐT", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ForgotPassword.this, "Vui lòng nhập SĐT", Toast.LENGTH_SHORT).show();
                 edtPhoneNumber.setError("Nhập SĐT");
                 edtPhoneNumber.requestFocus();
                 return;
             }
 
-            if(phoneNumber.trim().length() != 10) {
-                Toast.makeText(Register.this, "Vui lòng kiểm tra lại SĐT", Toast.LENGTH_SHORT).show();
-                edtPhoneNumber.setError("Nhập lại SĐT");
-                edtPhoneNumber.requestFocus();
-                return;
-            }
-
             if (!password.equals(reEnterPW)) {
-                Toast.makeText(Register.this, "Mật khẩu nhập lại không chính xác!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Mật khẩu nhập lại không chính xác!", Toast.LENGTH_SHORT).show();
                 edtReEnterPW.setError("Nhập lại mật khẩu");
                 edtReEnterPW.requestFocus();
                 return;
             }
-            checkExistUser(username, new CallbackMethod() {
+
+            getUserByUsername(username, new CallbackMethod() {
                 @Override
                 public void onSuccess(String information) {
-                    Toast.makeText(getApplicationContext(), information, Toast.LENGTH_LONG).show();
+
                 }
 
                 @Override
-                public void onSuccess(String a, String b) {
-
+                public void onSuccess(String username_, String phoneNumber) {
+                    if (username.equals(username_) && phoneNumber.equals(phoneNumber)) {
+                        sendVerificationCode(countryCode + phoneNumber);
+                    }
                 }
 
                 @Override
                 public void onFailure(String errorMessage) {
-                    sendVerificationCode(countryCode + phoneNumber);
+
                 }
             });
         }
     }
 
-    private void checkExistUser(String username, CallbackMethod callback) {
+    public void getUserByUsername(String username, CallbackMethod callback) {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Date.class, new DateDeserializer("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"))
+                .create();
+
         Retrofit retrofit = RetrofitClient.getClient();
         AuthenticationService authenticationService = retrofit.create(AuthenticationService.class);
-
         Call<ResultResponse> call = authenticationService.getUser(username);
 
         call.enqueue(new Callback<ResultResponse>() {
@@ -126,15 +128,18 @@ public class Register extends AppCompatActivity {
                 ResultResponse resultResponse = response.body();
 
                 if (resultResponse.getStatus() == 200) {
-                    callback.onSuccess("Tài khoản này đã tồn tại");
+                    User user = gson.fromJson(resultResponse.getData().toString(), User.class);
+                    String username_ = user.getUsername();
+                    String phoneNumber_ = user.getPhoneNumber();
+                    callback.onSuccess(username_, phoneNumber_);
                 } else {
-                    callback.onFailure(resultResponse.getMessage());
+                    Toast.makeText(getApplicationContext(), resultResponse.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResultResponse> call, Throwable t) {
-                callback.onFailure("1231231231");
+                callback.onFailure("Có lỗi đã xảy ra!");
             }
         });
     }
@@ -154,8 +159,8 @@ public class Register extends AppCompatActivity {
             mCallBack = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @Override
         public void onCodeSent(String otp, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-            Intent otpVerification = new Intent(Register.this, OTPVerification.class);
-            otpVerification.putExtra("flag", "SignUp");
+            Intent otpVerification = new Intent(getApplicationContext(), OTPVerification.class);
+            otpVerification.putExtra("flag", "ResetPW");
             otpVerification.putExtra("username", username);
             otpVerification.putExtra("password", password);
             otpVerification.putExtra("countryCode", countryCode);
@@ -171,7 +176,7 @@ public class Register extends AppCompatActivity {
 
         @Override
         public void onVerificationFailed(FirebaseException e) {
-            Toast.makeText(Register.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
         }
     };
 
@@ -183,14 +188,23 @@ public class Register extends AppCompatActivity {
         }
     }
 
+    public void onConvertSignUp(View v) {
+        if (v.getId() == R.id.tvRegister) {
+            Intent signUpView = new Intent(this, Register.class);
+            signUpView.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(signUpView);
+        }
+    }
+
     private void setControl() {
         edtUsername = findViewById(R.id.edtUsername);
+        edtPhoneNumber = findViewById(R.id.edtPhoneNumber);
         edtPassword = findViewById(R.id.edtPassword);
         edtReEnterPW = findViewById(R.id.edtReEnterPW);
-        edtPhoneNumber = findViewById(R.id.edtPhoneNumber);
 
-        btnSignUp = findViewById(R.id.btnSignUp);
+        btnVerify = findViewById(R.id.btnVerify);
 
         tvSignIn = findViewById(R.id.tvSignIn);
+        tvRegister = findViewById(R.id.tvRegister);
     }
 }

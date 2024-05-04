@@ -1,10 +1,9 @@
-package com.example.multiplechoiceapp.activities;
+package com.example.multiplechoiceapp.activities.QUY;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,7 +31,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.Date;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class Login extends AppCompatActivity {
@@ -156,7 +154,7 @@ public class Login extends AppCompatActivity {
                 ResultResponse resultResponse = response.body();
 
                 if (resultResponse.getStatus() == 200) {
-                    User user = gson.fromJson(resultResponse.getData().toString(), User.class);
+                    User user = gson.fromJson(resultResponse.getData().toString().trim(), User.class);
                     phoneNumber = user.getPhoneNumber();
                     callback.onSuccess(phoneNumber);
                 } else {

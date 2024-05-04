@@ -3,16 +3,42 @@ package com.example.multiplechoiceapp.models;
 import java.util.List;
 
 public class Detailed_Assignment {
+    private DetailedAssignmentKey id;
+    private Assignment assignment;
+    private Question question;
     private String selectedAnswer;
-    private List<Assignment> assignment;
-    private List<Question> question;
 
     public Detailed_Assignment() {
     }
 
-    public Detailed_Assignment(String selectedAnswer, List<Assignment> assignment, List<Question> question) {
-        this.selectedAnswer = selectedAnswer;
+    public Detailed_Assignment(DetailedAssignmentKey id, Assignment assignment, Question question, String selectedAnswer) {
+        this.id = id;
         this.assignment = assignment;
+        this.question = question;
+        this.selectedAnswer = selectedAnswer;
+    }
+
+    public DetailedAssignmentKey getId() {
+        return id;
+    }
+
+    public void setId(DetailedAssignmentKey id) {
+        this.id = id;
+    }
+
+    public Assignment getAssignment() {
+        return assignment;
+    }
+
+    public void setAssignment(Assignment assignment) {
+        this.assignment = assignment;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
         this.question = question;
     }
 
@@ -22,21 +48,5 @@ public class Detailed_Assignment {
 
     public void setSelectedAnswer(String selectedAnswer) {
         this.selectedAnswer = selectedAnswer;
-    }
-
-    public List<Assignment> getAssignment() {
-        return assignment;
-    }
-
-    public void setAssignment(List<Assignment> assignment) {
-        this.assignment = assignment;
-    }
-
-    public List<Question> getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(List<Question> question) {
-        this.question = question;
     }
 }

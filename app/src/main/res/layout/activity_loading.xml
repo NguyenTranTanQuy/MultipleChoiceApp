@@ -5,6 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:foreground="@drawable/loading"
-    tools:context=".activities.Loading">
+    tools:context=".activities.QUY.Loading">
 
 </androidx.constraintlayout.widget.ConstraintLayout>
