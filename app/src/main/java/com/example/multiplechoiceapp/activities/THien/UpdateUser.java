@@ -38,6 +38,7 @@ public class UpdateUser extends AppCompatActivity {
         if (intent != null) {
             username = intent.getStringExtra("USERNAME");
             name = intent.getStringExtra("NAME");
+            Toast.makeText(UpdateUser.this,name,Toast.LENGTH_SHORT).show();
             email = intent.getStringExtra("EMAIL");
             phone = intent.getStringExtra("PHONE");
 
@@ -46,12 +47,17 @@ public class UpdateUser extends AppCompatActivity {
     }
 
     private void setEvent() {
+        editName.setText(name);
+        edtEmail.setText(email);
+        edtPhone.setText(phone);
         btnUpdateUser.setOnClickListener(new View.OnClickListener() {
+
+
             @Override
             public void onClick(View v) {
-                String name = editName.getText().toString();
-                String email = edtEmail.getText().toString();
-                String phone = edtPhone.getText().toString();
+                name = editName.getText().toString();
+                email = edtEmail.getText().toString();
+                phone = edtPhone.getText().toString();
                 updateUser(username, name, email, phone, new CallbackMethod() {
                     @Override
                     public void onSuccess(String information) {

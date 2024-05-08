@@ -1,11 +1,15 @@
 package com.example.multiplechoiceapp.activities.THien;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,8 +33,8 @@ public class SaveExamResult extends AppCompatActivity {
     private Long topicSetCode =0L;
     private PieChart pieChart;
     private Float duration;
+    private String username;
 
-    private String username = "thuhien123";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,15 +47,13 @@ public class SaveExamResult extends AppCompatActivity {
             socautl = intent.getIntExtra("SO_CAUTL", 0);
             socauh = intent.getIntExtra("SO_CAUH", 0);
             topicSetCode = intent.getLongExtra("ID_TOPICSET",0);
-            //thoi gian
+            username = intent.getStringExtra("USERNAME");
             duration = intent.getFloatExtra("DURATION",0);
             thoigian = intent.getFloatExtra("THOI_GIAN",0);
-            //Toast.makeText(SaveExamResult.this,"SaveExam: "+String.valueOf(duration),Toast.LENGTH_SHORT).show();
             DecimalFormat decimalFormat = new DecimalFormat("#.##");
             String diemfm = decimalFormat.format(diem);
             String socau = "Số câu đúng:"+socautl+"/"+socauh;
             String d = "Điểm:  "+ diemfm;
-
             double minutes = thoigian;
             int totalSeconds = (int) (minutes * 60);
             int giaydalam = totalSeconds % 60;
@@ -83,6 +85,13 @@ public class SaveExamResult extends AppCompatActivity {
     }
 
     private void setEvent() {
+        btnHomeSaveExamResult.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent1 = new Intent(SaveExamResult.this, Home.class);
+                v.getContext().startActivity(intent1);
+            }
+        });
         btnDetailSaveExamResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,11 +105,10 @@ public class SaveExamResult extends AppCompatActivity {
         btnRetestSaveExamResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //duration = topicSet.getDuration();
                 Intent intent = new Intent(SaveExamResult.this, Exam.class);
                 intent.putExtra("ID_TOPICSET",topicSetCode);
-                intent.putExtra("DURATION",duration);
                 intent.putExtra("USERNAME",username);
+                intent.putExtra("DURATION",duration);
                 startActivity(intent);
             }
         });

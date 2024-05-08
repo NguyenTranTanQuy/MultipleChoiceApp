@@ -47,18 +47,21 @@ public interface AuthenticationService {
             @Field("password") String password,
             @Field("phoneNumber") String phoneNumber
     );
+//*********************
 
-    //*********************
-
-    //Exam Thu Hien
+    //Exam Thu Hien v
     @GET("question/{topic_set_code}")
     Call<List<Question>> getQuestion(
-            @Path("topic_set_code") Long topicSet
+            @Path("topic_set_code") Long topicSetID
     );
+
+    //Exam v
     @GET("selection/{questionCode}")
     Call<List<Selection>> getSelection(
-            @Path("questionCode") Long questionCode
+            @Path("questionCode") Long questionID
     );
+
+    //UpdateUser v
     @FormUrlEncoded
     @POST("user/update")
     Call<ResultResponse> updateUser(
@@ -68,12 +71,7 @@ public interface AuthenticationService {
             @Field("phoneNumber") String phoneNumber
     );
 
-    //TopicSet Thu Hien
-    @GET("topic_set/all")
-    Call<List<Topic_Set>> getTopicSet(
-    );
-
-    //Add Assignment Thu Hien
+    //AddAssignment by Exam Thu Hien v
     @FormUrlEncoded
     @POST("assignment/add")
     Call<ResultResponse> addAssignment(
@@ -81,6 +79,8 @@ public interface AuthenticationService {
             @Field("topicSetID") Long topicSetID,
             @Field("username") String username
     );
+
+    //Exam v
     @FormUrlEncoded
     @POST("detailed-assignment/add")
     Call<ResultResponse> add_DetailAssignment(
@@ -88,28 +88,30 @@ public interface AuthenticationService {
             @Field("questionID") Long questionID,
             @Field("selectedAnswer") String selectedAnswer
     );
-    @GET("assignment/count")
-    Call<Long> getCountAssignment(
-    );
 
+    //ExamAgain v
     @GET("assignment/find")
     Call<List<Assignment>> getAssignment(
             @Query("topicSetID") Long topicSetID,
             @Query("username") String username
     );
 
-    @GET("detailed-assignment/findAssignmentID2")
+    //ExamAgain v
+    @GET("detailed-assignment/findAssignmentID")
     Call<List<Detailed_Assignment>> getListDetailedAssignment(
             @Query("assignmentID") Long assignmentID
     );
 
+    //Home v
     @GET("topic/find")
     Call<List<Topic>> getListTopicHome(
             @Query("username") String username
     );
+    //TopicSet v
     @GET("topic_set/topicID")
     Call<List<Topic_Set>> getTopicSetByTopicID(
             @Query("topicID") Long topicID
     );
 
 }
+

@@ -56,7 +56,6 @@ public class Home extends AppCompatActivity {
     private String username;
 
     private Handler handler;
-    private int tmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,11 +71,9 @@ public class Home extends AppCompatActivity {
         NavBottom navBottom = new NavBottom(); // Khởi tạo Fragment
         fragmentTransaction.add(R.id.fragment_container, navBottom); // Thêm Fragment vào Activity
         fragmentTransaction.commit();
-
         setControl();
         setEvent();
         initViews();
-
         handler = new Handler(Looper.getMainLooper());
         repeatTask();
     }
@@ -85,6 +82,7 @@ public class Home extends AppCompatActivity {
         RetrofitClient retrofitClient = new RetrofitClient();
         SharedPreferences sharedPreferences = getSharedPreferences("SaveAccount", Context.MODE_PRIVATE);
         username = sharedPreferences.getString("username", "");
+        username ="thuhien123";
         TakeTopic(retrofitClient,username);
         btnTopicHome.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,7 +120,6 @@ public class Home extends AppCompatActivity {
                             if (position < customAdapterTopic.getItemCount()) {
                                 Topic tp = customAdapterTopic.getItem(position);
                                 topicID = tp.getTopicCode();
-                                String name = tp.getTopicName();
                                 if (tp != null) {
                                     Intent intent = new Intent(Home.this, TopicSet.class);
                                     intent.putExtra("ID_TOPIC", topicID);
@@ -215,7 +212,6 @@ public class Home extends AppCompatActivity {
 
                         if(response.body().size() > Count.count){
                             BadgeUtils.attachBadgeDrawable(badgeDrawable,toolbar,R.id.notification);
-                            tmp = response.body().size();
                         }
                     }
                     @Override

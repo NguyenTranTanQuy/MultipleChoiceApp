@@ -47,7 +47,6 @@ public class TopicSet extends AppCompatActivity {
 
     private Button btnthi, btnfindTopicSet,btnAddTopicSet;
 
-    private EditText txtFindTopicSet;
     private ListView lvDanhsach;
     private CustomAdapterTopicSet customAdapterTopicSet;
     private Float duration = 0F;
@@ -57,7 +56,6 @@ public class TopicSet extends AppCompatActivity {
 
     private Toolbar toolbar;
     private BadgeDrawable badgeDrawable;
-    private FloatingActionButton fabCreateTopicSet;
 
     private Handler handler;
     private int tmp;
@@ -108,7 +106,6 @@ public class TopicSet extends AppCompatActivity {
                 if(response.isSuccessful()){
                     List<Topic_Set> topicset = response.body();
                     for(Topic_Set tp: topicset){
-                        txtFindTopicSet.setText(tp.getTopicSetName());
                         topicSetCode = tp.getTopicSetID();
                     }
                     customAdapterTopicSet = new CustomAdapterTopicSet(TopicSet.this, R.layout.layout_list_topicset, topicset);
@@ -145,7 +142,7 @@ public class TopicSet extends AppCompatActivity {
                     });
                 }
                 else{
-                    txtFindTopicSet.setText("Loi 1");
+                    Log.e("Error onResponse", "customAdapterTopicSet:"+response.message());
 
                 }
 
@@ -153,14 +150,12 @@ public class TopicSet extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Topic_Set>> call, Throwable t) {
-                txtFindTopicSet.setText("Loi 2");
-                Toast.makeText(TopicSet.this,call.toString(),Toast.LENGTH_SHORT).show();
+                Log.e("Error onFailure", "getTopic"+t.getMessage());
             }
         });
     }
 
     private void setControl(){
-        txtFindTopicSet = findViewById(R.id.txtFindTopicSet);
         lvDanhsach = findViewById(R.id.lvDanhsachTopicset);
         btnAddTopicSet = findViewById(R.id.btnAddTopicSet);
     }
@@ -217,3 +212,4 @@ public class TopicSet extends AppCompatActivity {
         }, 3000); // Thực hiện sau mỗi 3 giây
     }
 }
+

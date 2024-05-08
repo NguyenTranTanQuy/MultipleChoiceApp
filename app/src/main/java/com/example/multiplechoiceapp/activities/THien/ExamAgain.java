@@ -1,3 +1,6 @@
+
+
+
 package com.example.multiplechoiceapp.activities.THien;
 
 import android.content.Intent;
@@ -78,7 +81,7 @@ public class ExamAgain extends AppCompatActivity {
                 int selectionPosition = adapter.getPosition("List Question");
                 snListQuestion.setSelection(selectionPosition);
                 Long code = myQuestionCode.get(index);
-                TakeSelection(retrofitClient,code);
+                getSelection(retrofitClient,code);
             }
         });
         btnBeforeExam.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +98,7 @@ public class ExamAgain extends AppCompatActivity {
                 int selectionPosition = adapter.getPosition("List Question");
                 snListQuestion.setSelection(selectionPosition);
                 Long code = myQuestionCode.get(index);
-                TakeSelection(retrofitClient,code);
+                getSelection(retrofitClient,code);
 
             }
         });
@@ -103,22 +106,22 @@ public class ExamAgain extends AppCompatActivity {
         snListQuestion.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if(myList.size()>0){
-                        int i = position-1;
-                        btnAfterExam.setEnabled(true);
-                        if(position !=0){
-                            if(position == myList.size()){
-                                btnAfterExam.setEnabled(false);
-                            }
-                            if(i==0){
-                                btnBeforeExam.setEnabled(false);
-                            }
-                            else{
-                                btnBeforeExam.setEnabled(true);
-                            }
-                            Long code = myQuestionCode.get(i);
-                            TakeSelection(retrofitClient,code);
-                            index = position -1;
+                if(myList.size()>0){
+                    int i = position-1;
+                    btnAfterExam.setEnabled(true);
+                    if(position !=0){
+                        if(position == myList.size()){
+                            btnAfterExam.setEnabled(false);
+                        }
+                        if(i==0){
+                            btnBeforeExam.setEnabled(false);
+                        }
+                        else{
+                            btnBeforeExam.setEnabled(true);
+                        }
+                        Long code = myQuestionCode.get(i);
+                        getSelection(retrofitClient,code);
+                        index = position -1;
                     }
                 }
             }
@@ -130,11 +133,9 @@ public class ExamAgain extends AppCompatActivity {
         btnDetailExam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String luachon = "";
                 Float diem = 0F;
                 int socau = 0;
                 for (int j =0;j<myList.size();j++){
-                    luachon +=myList.get(j);
                     if(myList.get(j).equals(myAnswer.get(j))){
                         socau ++;
                     }
@@ -168,10 +169,9 @@ public class ExamAgain extends AppCompatActivity {
                             getDetailedAssignments(retrofitClient);
 
                         } else {
-                            txtContextExam.setText("No assignments found");
+                            Log.e("Response", "No assignments found");
                         }
                     } else {
-                        txtContextExam.setText("BBBBB");
                         Log.e("Response", "Unsuccessful: " + response.message());
                     }
                 }
@@ -179,8 +179,7 @@ public class ExamAgain extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Assignment>> call, Throwable t) {
-                txtContextExam.setText("BBBBB");
-                Log.e("Response", t.getMessage());
+                Log.e("onFailure", t.getMessage());
             }
         });
     }
@@ -199,8 +198,6 @@ public class ExamAgain extends AppCompatActivity {
                         String tam ="";
                         String a ="",b="";
                         for (Detailed_Assignment detailedAssignment : detailedAssignments) {
-                            /*a += detailedAssignment.getSelectedAnswer();
-                            b += detailedAssignment.getAssignment().getDuration();*/
                             myQuestionCode.add(detailedAssignment.getId().getQuestionID());
                             myList.add(detailedAssignment.getSelectedAnswer());
                             myAnswer.add(detailedAssignment.getQuestion().getAnswer());
@@ -210,7 +207,6 @@ public class ExamAgain extends AppCompatActivity {
                             selec.add(cau);
                             v ++;
                         }
-                        Toast.makeText(ExamAgain.this,a+"\n"+b, Toast.LENGTH_SHORT).show();
                         //Chuyen dap an - Chu thanh so
                         String input = "";
                         int k =0;
@@ -221,9 +217,9 @@ public class ExamAgain extends AppCompatActivity {
                         String[] numbers = input.split(",");
                         StringBuilder result = new StringBuilder();
                         for (String number : numbers) {
-                            char letter = number.charAt(0); // Lấy ký tự từ chuỗi số
-                            int num = (int) (letter - 'A' + 1); // Chuyển chữ cái thành số tương ứng ('A' là 1, 'B' là 2, v.v.)
-                            char convertedChar = (char) ('1' + num - 1); // Chuyển số thành ký tự tương ứng ('1' tương ứng với số 1)
+                            char letter = number.charAt(0);
+                            int num = (int) (letter - 'A' + 1);
+                            char convertedChar = (char) ('1' + num - 1);
                             result.append(convertedChar);
                         }
                         String dapan = result.toString();
@@ -245,26 +241,21 @@ public class ExamAgain extends AppCompatActivity {
                         snListQuestion.setSelection(selectionPosition);
                         if(myQuestionCode.size()>0){
                             Long code = myQuestionCode.get(index);
-                            TakeSelection(retrofitClient, code);
+                            getSelection(retrofitClient, code);
                         }
-                    } else {
-                        txtContextExam.setText("No detailed assignments found");
                     }
                 } else {
-                    txtContextExam.setText("Failed to get detailed assignments");
-                    Log.e("Response", "Unsuccessful: " + response.message());
+                    Log.e("Response getDetail", "Unsuccessful: " + response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<Detailed_Assignment>> call, Throwable t) {
-                txtContextExam.setText("Failed to get detailed assignments");
-                Log.e("Response", "Failed: " + t.getMessage());
+                Log.e("onFailure getDetail", "Failed: " + t.getMessage());
             }
         });
     }
-    private void TakeSelection(RetrofitClient retrofitClient,Long questionsCode) {
-        //Toast.makeText(Exam1.this,a,Toast.LENGTH_SHORT).show();
+    private void getSelection(RetrofitClient retrofitClient,Long questionsCode) {
         retrofitClient.getSelection(questionsCode, new Callback<List<Selection>>(){
             @Override
             public void onResponse(Call<List<Selection>> call, Response<List<Selection>> response) {
@@ -280,36 +271,30 @@ public class ExamAgain extends AppCompatActivity {
                         int selectedAnswer = Integer.valueOf(myAnswer.get(index));
                         customAdapterSelection.setSelectedItem(position - 1, selectedAnswer - 1);
                         customAdapterSelection.notifyDataSetChanged();
-                        /*if (!myList.get(index).equals("0")) {
-                            int position = Integer.valueOf(myList.get(index));
-                            int selectedAnswer = Integer.valueOf(myAnswer.get(index));
-                            customAdapterSelection.setSelectedItem(position - 1, selectedAnswer - 1);
-                            customAdapterSelection.notifyDataSetChanged();
-                        }*/
-                        
+
                     } else {
-                        Log.e("Response", "List of questions is null");
+                        Log.e("Response", "List of questions is null"+response.message());
                     }
                 } else {
-                    txtContextExam.setText("SSSSS");
+                    Log.e("Response", "getSelection: "+response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<Selection>> call, Throwable t) {
-                txtContextExam.setText("AAAAAAB");
+                Log.e("onFailure", "getSelection: "+t.getMessage());
             }
         });
     }
 
     private void setControl(){
-            txtSentence = findViewById(R.id.txtSentence1);
-            txtContextExam = findViewById(R.id.txtContextExam1);
-            btnBeforeExam = findViewById(R.id.btnBeforeExam1);
-            btnAfterExam = findViewById(R.id.btnAfterExam1);
-            snListQuestion = findViewById(R.id.snlistExam1);
-            lvDanhsach = findViewById(R.id.lvDanhsachAgain);
-            btnDetailExam = findViewById(R.id.btnDetailExam1);
+        txtSentence = findViewById(R.id.txtSentence1);
+        txtContextExam = findViewById(R.id.txtContextExam1);
+        btnBeforeExam = findViewById(R.id.btnBeforeExam1);
+        btnAfterExam = findViewById(R.id.btnAfterExam1);
+        snListQuestion = findViewById(R.id.snlistExam1);
+        lvDanhsach = findViewById(R.id.lvDanhsachAgain);
+        btnDetailExam = findViewById(R.id.btnDetailExam1);
 
-        }
+    }
 }

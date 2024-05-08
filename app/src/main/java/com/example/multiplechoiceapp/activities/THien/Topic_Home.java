@@ -41,7 +41,7 @@ public class Topic_Home extends AppCompatActivity {
 
     private void setEvent() {
         RetrofitClient retrofitClient = new RetrofitClient();
-        TakeTopic(retrofitClient,username);
+        getTopic(retrofitClient,username);
         lvTopic.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
@@ -55,7 +55,7 @@ public class Topic_Home extends AppCompatActivity {
                                 topicID = tp.getTopicCode();
                                 String name = tp.getTopicName();
                                 if (tp != null) {
-                                    Intent intent = new Intent(Topic_Home.this, TopicSet.class);
+                                    Intent intent = new Intent(Topic_Home.this,TopicSet.class);
                                     intent.putExtra("ID_TOPIC", topicID);
                                     intent.putExtra("USERNAME", username);
                                     startActivity(intent);
@@ -78,7 +78,7 @@ public class Topic_Home extends AppCompatActivity {
 
     }
 
-    private void TakeTopic(RetrofitClient retrofitClient, String username) {
+    private void getTopic(RetrofitClient retrofitClient, String username) {
         retrofitClient.getTopicHome(username, new Callback<List<com.example.multiplechoiceapp.models.Topic>>() {
             @Override
             public void onResponse(Call<List<com.example.multiplechoiceapp.models.Topic>> call, Response<List<com.example.multiplechoiceapp.models.Topic>> response) {
@@ -88,14 +88,14 @@ public class Topic_Home extends AppCompatActivity {
                     customAdapterTopic = new CustomAdapterTopic(Topic_Home.this, R.layout.layout_list_topic_home, topic);
                     lvTopic.setAdapter(customAdapterTopic);
                 } else {
-                    Log.e("Erro", "Lỗi Topic");
+                    Log.e("Erro onResponse", "getTopic");
 
                 }
             }
 
             @Override
             public void onFailure(Call<List<com.example.multiplechoiceapp.models.Topic>> call, Throwable t) {
-                Log.e("E",t.getMessage());
+                Log.e("Erro onFailure","getTopic:"+t.getMessage());
 
             }
         });

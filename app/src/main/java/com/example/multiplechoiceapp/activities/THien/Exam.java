@@ -1,6 +1,11 @@
+
+
+
 package com.example.multiplechoiceapp.activities.THien;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -23,11 +28,13 @@ import com.example.multiplechoiceapp.models.Selection;
 import com.example.multiplechoiceapp.retrofit.AuthenticationService;
 import com.example.multiplechoiceapp.retrofit.RetrofitClient;
 import com.example.multiplechoiceapp.retrofit.models.ResultResponse;
+
 import com.example.multiplechoiceapp.retrofit.utils.CallbackMethod;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,6 +55,7 @@ public class Exam extends AppCompatActivity {
     private List<String> myAnswer = new ArrayList<>();
     private List<String> myList = new ArrayList<>();
     private List<Long> myQuestionCode= new ArrayList<>();
+    private List<Integer> questionIndex = new ArrayList<>();
     private CustomAdapterSelection customAdapterSelection;
     private ArrayAdapter<String> adapter;
     private Long topicSetCode = null;
@@ -62,38 +70,38 @@ public class Exam extends AppCompatActivity {
         startTime();
     }
     private void startTime() {
-    CountDownTimer countDowTime = new CountDownTimer(time, 1000) {
-        @Override
-        public void onTick(long l) {
-            time = l;
-            updateCountDownText();
-        }
+        CountDownTimer countDowTime = new CountDownTimer(time, 1000) {
+            @Override
+            public void onTick(long l) {
+                time = l;
+                updateCountDownText();
+            }
 
-        @Override
-        public void onFinish() {
-            time = 0;
-            updateCountDownText();
-            btnAfterExam.setEnabled(false);
-            btnBeforeExam.setEnabled(false);
+            @Override
+            public void onFinish() {
+                time = 0;
+                updateCountDownText();
+                btnAfterExam.setEnabled(false);
+                btnBeforeExam.setEnabled(false);
 
+            }
+        }.start();
+    }
+    private void updateCountDownText() {
+        minutes=(int)((time/1000)/60);
+        seconds = (int)((time/1000)%60);
+        String timeFormatted = String.format(Locale.getDefault(),"%02d:%02d",minutes,seconds);
+        txtTime.setText(timeFormatted);
+        if(time<10000){
+            txtTime.setTextColor(Color.RED);
         }
-    }.start();
-}
-private void updateCountDownText() {
-    minutes=(int)((time/1000)/60);
-    seconds = (int)((time/1000)%60);
-    String timeFormatted = String.format(Locale.getDefault(),"%02d:%02d",minutes,seconds);
-    txtTime.setText(timeFormatted);
-    if(time<10000){
-        txtTime.setTextColor(Color.RED);
+        else{
+            txtTime.setTextColor(Color.BLACK);
+        }
     }
-    else{
-        txtTime.setTextColor(Color.BLACK);
-    }
-}
     private void setEvent() {
         btnBeforeExam.setEnabled(false);
-         // Mã của topicSet
+        // Mã của topicSet
         Intent intent = getIntent();
         if (intent != null) {
             duration = intent.getFloatExtra("DURATION",0);
@@ -103,7 +111,7 @@ private void updateCountDownText() {
         int timee = Math.round(duration);
         time = timee*60*1000;
         RetrofitClient retrofitClient = new RetrofitClient();
-        TakeQuestion(retrofitClient,topicSetCode);
+        getQuestion(retrofitClient,topicSetCode);
         btnAfterExam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,8 +128,12 @@ private void updateCountDownText() {
                 }
                 int selectionPosition = adapter.getPosition("List Question");
                 snListQuestion.setSelection(selectionPosition);
-                Long code = myQuestionCode.get(index);
-                TakeSelection(retrofitClient,code);
+                int t = questionIndex.get(index);
+                if(t>=0&&t<=myList.size()){
+                    Long code = myQuestionCode.get(t);
+                    getSelection(retrofitClient,code);
+                }
+
             }
         });
         btnBeforeExam.setOnClickListener(new View.OnClickListener() {
@@ -137,8 +149,9 @@ private void updateCountDownText() {
                 }
                 int selectionPosition = adapter.getPosition("List Question");
                 snListQuestion.setSelection(selectionPosition);
-                Long code = myQuestionCode.get(index);
-                TakeSelection(retrofitClient,code);
+                int t = questionIndex.get(index);
+                Long code = myQuestionCode.get(t);
+                getSelection(retrofitClient,code);
 
             }
         });
@@ -169,9 +182,9 @@ private void updateCountDownText() {
                 String[] numbers = input.split(",");
                 StringBuilder result = new StringBuilder();
                 for (String number : numbers) {
-                    char letter = number.charAt(0); // Lấy ký tự từ chuỗi số
-                    int num = (int) (letter - 'A' + 1); // Chuyển chữ cái thành số tương ứng ('A' là 1, 'B' là 2, v.v.)
-                    char convertedChar = (char) ('1' + num - 1); // Chuyển số thành ký tự tương ứng ('1' tương ứng với số 1)
+                    char letter = number.charAt(0);
+                    int num = (int) (letter - 'A' + 1);
+                    char convertedChar = (char) ('1' + num - 1);
                     result.append(convertedChar);
                 }
                 String dapan = result.toString();
@@ -183,12 +196,19 @@ private void updateCountDownText() {
                 for (String character : arrDapan) {
                     lessonAnswer.add(character);
                     dapanCH +=character;
+
+                }
+                List<String> listDA = new ArrayList<>();
+                for(int j=0;j<myList.size();j++){
+                    int d = questionIndex.get(j);
+                    listDA.add(lessonAnswer.get(d));
                 }
 
                 Float diem = 0F;
                 int socau = 0;
                 for (int j =0;j<myList.size();j++){
-                    if(myList.get(j).equals(lessonAnswer.get(j))){
+                    int d = questionIndex.get(j);
+                    if(myList.get(j).equals(listDA.get(j))){
                         socau ++;
                     }
                 }
@@ -232,11 +252,12 @@ private void updateCountDownText() {
                     }
                     @Override
                     public void onFailure(String errorMessage) {
-                        Toast.makeText(Exam.this, "Erro Submit", Toast.LENGTH_LONG).show();
+                        Log.e("onFailure", "UnSubmit: : "+errorMessage);
                     }
                 });
                 Intent intent = new Intent(Exam.this, SaveExamResult.class);
                 intent.putExtra("DIEM",diem);
+                intent.putExtra("USERNAME",Username);
                 intent.putExtra("SO_CAUTL",socau);
                 intent.putExtra("SO_CAUH",myList.size());
                 intent.putExtra("THOI_GIAN",thoigian);
@@ -250,22 +271,23 @@ private void updateCountDownText() {
         snListQuestion.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if(myList.size()>0){
-                        int i = position-1;
-                        btnAfterExam.setEnabled(true);
-                        if(position !=0){
-                            if(position == myList.size()){
-                                btnAfterExam.setEnabled(false);
-                            }
-                            if(i==0){
-                                btnBeforeExam.setEnabled(false);
-                            }
-                            else{
-                                btnBeforeExam.setEnabled(true);
-                            }
-                            Long code = myQuestionCode.get(i);
-                            TakeSelection(retrofitClient,code);
-                            index = position -1;
+                if(myList.size()>0){
+                    int i = position-1;
+                    btnAfterExam.setEnabled(true);
+                    if(position !=0){
+                        if(position == myList.size()){
+                            btnAfterExam.setEnabled(false);
+                        }
+                        if(i==0){
+                            btnBeforeExam.setEnabled(false);
+                        }
+                        else{
+                            btnBeforeExam.setEnabled(true);
+                        }
+                        int t = questionIndex.get(i);
+                        Long code = myQuestionCode.get(t);
+                        getSelection(retrofitClient,code);
+                        index = position -1;
                     }
 
 
@@ -291,13 +313,12 @@ private void updateCountDownText() {
                     callback.onFailure("Yêu cầu không thành công, mã trạng thái: " + response);
                     return;
                 }
-
-
                 if (resultResponse != null) {
                     Object assignmentID = resultResponse.getData();
                     assID = Long.parseLong(assignmentID.toString().split("\\.")[0]);
                     for(int j = 0;j<myList.size();j++){
-                        add_DetailAssignment(assID, myQuestionCode.get(j), myList.get(j),new CallbackMethod() {
+                        Long t = Long.valueOf(questionIndex.get(j)+1);
+                        add_DetailAssignment(assID, t, myList.get(j),new CallbackMethod() {
                             @Override
                             public void onSuccess(String information) {
                             }
@@ -349,7 +370,6 @@ private void updateCountDownText() {
                 ResultResponse resultResponse = response.body();
                 if (!response.isSuccessful()) {
                     callback.onFailure("Yêu cầu không thành công, mã trạng thái: " + response);
-                    txtContextExam.setText(response.toString());
                     Log.e("ERR",resultResponse.getMessage());
                     return;
                 }
@@ -383,10 +403,10 @@ private void updateCountDownText() {
                 }
             }
         });
-}
+    }
 
 
-    public void TakeQuestion(RetrofitClient retrofitClient, Long topicSetCode){
+    public void getQuestion(RetrofitClient retrofitClient, Long topicSetCode){
         retrofitClient.getQuestion(topicSetCode, new Callback<List<Question>>() {
             @Override
             public void onResponse(Call<List<Question>> call, Response<List<Question>> response) {
@@ -409,14 +429,33 @@ private void updateCountDownText() {
                             selec.add(cau);
                             j ++;
                         }
+                        //********************
+
+                        Random random = new Random();
+                        long[] randomNumbers = new long[myQuestionCode.size()]; // Sửa kích thước mảng
+                        for (int i = 0; i < myQuestionCode.size(); i++) {
+                            //randomNumbers[i] = myQuestionCode.get(i);
+                            randomNumbers[i] = i;
+                        }
+                        for (int i = randomNumbers.length - 1; i > 0; i--) {
+                            int index = random.nextInt(i + 1);
+                            long temp = randomNumbers[index];
+                            randomNumbers[index] = randomNumbers[i];
+                            randomNumbers[i] = temp;
+                        }
+                        for(long num : randomNumbers){
+                            questionIndex.add(Integer.valueOf((int) num));
+                        }
+                        //*********************
                         adapter = new ArrayAdapter<>(Exam.this,android.R.layout.simple_spinner_item, selec);
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         snListQuestion.setAdapter(adapter);
                         int selectionPosition = adapter.getPosition("List Question");
                         snListQuestion.setSelection(selectionPosition);
                         if(myQuestionCode.size()>0){
-                            Long code = myQuestionCode.get(index);
-                            TakeSelection(retrofitClient, code);
+                            int t = questionIndex.get(index);
+                            Long code = myQuestionCode.get(t);
+                            getSelection(retrofitClient, code);
                         }
                     } else {
                         Log.e("Response", "List of questions is null");
@@ -427,12 +466,13 @@ private void updateCountDownText() {
 
             @Override
             public void onFailure(Call<List<Question>> call, Throwable t) {
+                Log.e("onFailure", "Error: "+t.getMessage());
             }
         });
 
     }
 
-    private void TakeSelection(RetrofitClient retrofitClient,Long questionsCode) {
+    private void getSelection(RetrofitClient retrofitClient,Long questionsCode) {
         retrofitClient.getSelection(questionsCode, new Callback<List<Selection>>(){
             @Override
             public void onResponse(Call<List<Selection>> call, Response<List<Selection>> response) {
@@ -440,7 +480,7 @@ private void updateCountDownText() {
                     List<Selection> selections = response.body();
                     String t = "Câu "+(index+1)+"/"+myList.size();
                     txtSentence.setText(t);
-                    txtContextExam.setText(myQuestion.get(index));
+                    txtContextExam.setText(myQuestion.get(questionsCode.intValue()-1));
                     if (selections != null) {
                         customAdapterSelection = new CustomAdapterSelection(Exam.this, R.layout.layout_list_question, selections);
                         lvDanhsach.setAdapter(customAdapterSelection);
@@ -450,29 +490,29 @@ private void updateCountDownText() {
                             customAdapterSelection.notifyDataSetChanged();
                         }
                     } else {
-                        Log.e("Response", "List of questions is null");
+                        Log.e("Response", "List of Selections is null");
                     }
                 } else {
-                    txtContextExam.setText("SSSSS");
+                    Log.e("Response", "UnSucc: "+response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<List<Selection>> call, Throwable t) {
-                txtContextExam.setText("AAAAAAB");
+                Log.e("onFailure", "Erro:"+t.getMessage());
             }
         });
     }
 
     private void setControl(){
-            txtSentence = findViewById(R.id.txtSentence);
-            txtContextExam = findViewById(R.id.txtContextExam);
-            btnBeforeExam = findViewById(R.id.btnBeforeExam);
-            btnAfterExam = findViewById(R.id.btnAfterExam);
-            btnSubmitExam = findViewById(R.id.btnSubmitExam);
-            snListQuestion = findViewById(R.id.snlistExam);
-            txtTime = findViewById(R.id.txtTime);
-            lvDanhsach = findViewById(R.id.lvDanhsach);
+        txtSentence = findViewById(R.id.txtSentence);
+        txtContextExam = findViewById(R.id.txtContextExam);
+        btnBeforeExam = findViewById(R.id.btnBeforeExam);
+        btnAfterExam = findViewById(R.id.btnAfterExam);
+        btnSubmitExam = findViewById(R.id.btnSubmitExam);
+        snListQuestion = findViewById(R.id.snlistExam);
+        txtTime = findViewById(R.id.txtTime);
+        lvDanhsach = findViewById(R.id.lvDanhsach);
 
-        }
+    }
 }

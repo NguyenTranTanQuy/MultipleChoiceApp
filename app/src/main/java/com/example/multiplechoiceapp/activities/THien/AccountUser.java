@@ -2,10 +2,13 @@ package com.example.multiplechoiceapp.activities.THien;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.multiplechoiceapp.R;
 import com.example.multiplechoiceapp.retrofit.AuthenticationService;
@@ -32,6 +35,7 @@ public class AccountUser extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null) {
             username = intent.getStringExtra("USERNAME");
+
         }
         setEvent();
     }
@@ -84,14 +88,17 @@ public class AccountUser extends AppCompatActivity {
                 ResultResponse resultResponse = response.body();
                 if (resultResponse != null && resultResponse.getStatus() == 200) {
                     String dataString = resultResponse.getData().toString();
-                    dataString = dataString.substring(0, dataString.lastIndexOf(" ") - 1);
+                    dataString = dataString.substring(0, dataString.lastIndexOf("}"));
                     String[] parts = dataString.split(", ");
+
                     int i =1;
                     for (String part : parts) {
                         String[] keyValue = part.split("=");
+
                         if (keyValue.length == 2) {
                             String key = keyValue[0];
                             String value = keyValue[1];
+
                             if(i==3){
                                 name = value;
                                 txtNameUser.setText(value);
@@ -108,6 +115,9 @@ public class AccountUser extends AppCompatActivity {
                         }
                     }
 
+                }
+                else{
+                    Log.e("UnSucc",response.message());
                 }
             }
 

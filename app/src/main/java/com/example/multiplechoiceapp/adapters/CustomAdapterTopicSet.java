@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import com.example.multiplechoiceapp.activities.TRIEU.ShareActivity;
 import com.example.multiplechoiceapp.models.Topic_Set;
 
 import java.util.List;
+import java.util.Random;
 
 public class CustomAdapterTopicSet extends ArrayAdapter<Topic_Set> {
 
@@ -31,8 +33,21 @@ public class CustomAdapterTopicSet extends ArrayAdapter<Topic_Set> {
     public interface OnButtonClickListener {
         void onButtonClick(Topic_Set topicSet, int i);
     }
+    private int[] imageList = {
+            R.drawable.img1,
+            R.drawable.img2,
+            R.drawable.img3,
+            R.drawable.img5,
+            R.drawable.img6,
+            R.drawable.img7,
+            R.drawable.img8
+    };
+    private int getRandomImage() {
+        Random rand = new Random();
+        return imageList[rand.nextInt(imageList.length)];
+    }
 
-    // Phương thức để thiết lập người nghe cho nút btnThi, btndetailTopicSet
+
     public void setOnButtonClickListener(OnButtonClickListener listener) {
         this.onButtonClickListener = listener;
     }
@@ -64,6 +79,7 @@ public class CustomAdapterTopicSet extends ArrayAdapter<Topic_Set> {
             viewHolder.btnThi = convertView.findViewById(R.id.btnexamTopicSet);
             viewHolder.btndetailTopicSet = convertView.findViewById(R.id.btndetailTopicSet);
             viewHolder.btnshareTopicSet = convertView.findViewById(R.id.btnshareTopicSet);
+            viewHolder.imageView = convertView.findViewById(R.id.imageView); // Đặt ImageView
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -76,6 +92,7 @@ public class CustomAdapterTopicSet extends ArrayAdapter<Topic_Set> {
 
         viewHolder.txtTopicSetCode.setText(t);
         viewHolder.txtTopicSetName.setText(topic_set.getTopicSetName());
+        viewHolder.imageView.setImageResource(getRandomImage()); // Đặt hình ảnh ngẫu nhiên
         viewHolder.btnThi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,18 +117,20 @@ public class CustomAdapterTopicSet extends ArrayAdapter<Topic_Set> {
                 if(onButtonClickListener !=null) {
                     onButtonClickListener.onButtonClick(data.get(position),3);
                 }
-
             }
         });
 
         return convertView;
     }
 
+
     private static class ViewHolder {
         TextView txtTopicSetCode;
         TextView txtTopicSetName;
         Button btnThi, btndetailTopicSet;
         ImageButton btnshareTopicSet;
+        ImageView imageView;
     }
+
 
 }
