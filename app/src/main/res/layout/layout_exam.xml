@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="375dp"
-        android:layout_height="210dp"
+        android:layout_height="160dp"
         android:orientation="horizontal"
         android:layout_marginTop="15dp"
         android:layout_marginRight="20dp"
@@ -52,7 +52,7 @@
             <TextView
                 android:id="@+id/tvNguoiTao"
                 android:layout_width="250dp"
-                android:layout_height="29dp"
+                android:layout_height="30dp"
                 android:layout_marginBottom="8dp"
                 android:text="Người tạo:"
                 android:textSize="15sp"
@@ -61,38 +61,10 @@
             <ProgressBar
                 android:id="@+id/tp1"
                 style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="12sp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="10dp"
+                android:layout_width="250dp"
+                android:layout_height="20sp"
                 android:max="100"
-                android:progress="100"
-                android:progressDrawable="@drawable/custom_progress_bar" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btnXemKetQua"
-                    android:layout_width="28dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10sp"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/answer"
-                    android:text="Xem kết quả" />
-
-                <Button
-                    android:id="@+id/btnLamLai"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10sp"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/answer"
-                    android:text="Làm lại" />
-            </LinearLayout>
-
+                android:progress="100" />
         </LinearLayout>
     </LinearLayout>
 

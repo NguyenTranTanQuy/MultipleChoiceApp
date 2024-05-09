@@ -1,15 +1,11 @@
 package com.example.multiplechoiceapp.activities.THien;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -33,8 +29,8 @@ public class SaveExamResult extends AppCompatActivity {
     private Long topicSetCode =0L;
     private PieChart pieChart;
     private Float duration;
-    private String username;
 
+    private String username = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +50,7 @@ public class SaveExamResult extends AppCompatActivity {
             String diemfm = decimalFormat.format(diem);
             String socau = "Số câu đúng:"+socautl+"/"+socauh;
             String d = "Điểm:  "+ diemfm;
+
             double minutes = thoigian;
             int totalSeconds = (int) (minutes * 60);
             int giaydalam = totalSeconds % 60;
@@ -105,10 +102,11 @@ public class SaveExamResult extends AppCompatActivity {
         btnRetestSaveExamResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SaveExamResult.this, Exam.class);
+                //duration = topicSet.getDuration();
+                Intent intent = new Intent(SaveExamResult.this, LevelQuestion.class);
                 intent.putExtra("ID_TOPICSET",topicSetCode);
-                intent.putExtra("USERNAME",username);
                 intent.putExtra("DURATION",duration);
+                intent.putExtra("USERNAME",username);
                 startActivity(intent);
             }
         });

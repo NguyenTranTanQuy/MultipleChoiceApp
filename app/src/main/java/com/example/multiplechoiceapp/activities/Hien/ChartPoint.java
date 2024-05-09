@@ -36,8 +36,13 @@ public class ChartPoint extends AppCompatActivity {
         // Tạo danh sách các thanh cột
         List<BarEntry> entries = new ArrayList<>();
         for (int i = 0; i < dataList.size(); i++) {
-            List<String> data = (List<String>) dataList.get(i);
-            float value = (float) (Double.valueOf(data.get(3)) * 10); // Chuyển điểm thành số thích hợp
+            List<Object> innerDataList = (List<Object>) dataList.get(i);
+            float value;
+            if (isNumeric(String.valueOf(innerDataList.get(3)))) {
+                value = (float) (Double.parseDouble(String.valueOf(innerDataList.get(3)))); // Chuyển điểm thành số thích hợp
+            } else {
+                value = 0; // Giá trị mặc định nếu không thể chuyển đổi
+            }
             entries.add(new BarEntry(i, value));
         }
 
@@ -45,17 +50,17 @@ public class ChartPoint extends AppCompatActivity {
         int[] colors = new int[]{
                 Color.rgb(255, 102, 0), // Cam
                 Color.rgb(51, 153, 255), // Xanh dương
-                Color.rgb(255, 204, 51), //Vàng
-                //Color.rgb(255, 0, 0),
+                Color.rgb(255, 204, 51), // Vàng
                 Color.rgb(0, 128, 0),
                 // Thêm các màu khác nếu cần
         };
+
         Description description = new Description();
         description.setEnabled(false); // Vô hiệu hóa tiêu đề mặc định của biểu đồ
         barChart.setDescription(description);
 
         // Tạo dataset và đặt giá trị cho biểu đồ cột, gán màu sắc cho từng thanh cột
-        BarDataSet dataSet = new BarDataSet(entries, "Số điểm");
+        BarDataSet dataSet = new BarDataSet(entries, "Điểm số");
         dataSet.setValueTextSize(15f);
         dataSet.setValueTextColor(Color.BLACK);
         dataSet.setColors(colors);
@@ -70,8 +75,8 @@ public class ChartPoint extends AppCompatActivity {
             public String getFormattedValue(float value) {
                 int index = (int) value;
                 if (index >= 0 && index < dataList.size()) {
-                    List<String> data = (List<String>) dataList.get(index);
-                    return data.get(0); // Mã đề
+                    List<Object> innerDataList = (List<Object>) dataList.get(index);
+                    return String.valueOf(((Double) innerDataList.get(0)).intValue()); // Mã đề
                 }
                 return ""; // Trả về chuỗi trống nếu không có dữ liệu phù hợp
             }
@@ -81,11 +86,11 @@ public class ChartPoint extends AppCompatActivity {
         xAxis.setAxisLineColor(Color.BLACK);
         xAxis.setAxisLineWidth(2f);
         xAxis.setGranularity(1f);
-        xAxis.setLabelRotationAngle(45); // Giảm góc quay để tránh chồng chéo
+        //xAxis.setLabelRotationAngle(45); // Giảm góc quay để tránh chồng chéo
         xAxis.setTextSize(15f); // Đặt kích thước chữ cho trục X
         xAxis.setTextColor(Color.BLACK); // Đặt màu chữ cho trục X
 
-// Tùy chỉnh trục Y
+        // Tùy chỉnh trục Y
         YAxis leftAxis = barChart.getAxisLeft();
         leftAxis.setAxisMinimum(0f);
         leftAxis.setAxisLineColor(Color.BLACK);
@@ -95,12 +100,18 @@ public class ChartPoint extends AppCompatActivity {
         leftAxis.setAxisLineWidth(2f);
         leftAxis.setTextSize(20f);
 
-// Vẽ biểu đồ
-        barChart.setData(new BarData(dataSet));
-        barChart.invalidate();
-
         // Vẽ biểu đồ
         barChart.setData(new BarData(dataSet));
         barChart.invalidate();
+    }
+
+    // Phương thức kiểm tra xem một chuỗi có phải là số hay không
+    private boolean isNumeric(String str) {
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch(NumberFormatException e) {
+            return false;
+        }
     }
 }

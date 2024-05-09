@@ -70,7 +70,6 @@ public class RatingsActivity extends AppCompatActivity {
             }
         });
     }
-
     private void getTopicSetStatistic(String topic_set_code, CallbackMethod callback) {
         Retrofit retrofit = RetrofitClient.getClient();
         Statistic statistic = retrofit.create(Statistic.class);
@@ -91,14 +90,12 @@ public class RatingsActivity extends AppCompatActivity {
                     callback.onFailure("Failed to get response from server");
                 }
             }
-
             @Override
             public void onFailure(Call<ResultResponse> call, Throwable t) {
                 callback.onFailure(t.getMessage());
             }
         });
     }
-
     private void setControl() {
         lvDanhSachXepHang = findViewById(R.id.lvDanhSachXepHang);
         btnThoat = findViewById(R.id.btnThoat);

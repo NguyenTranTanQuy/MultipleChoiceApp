@@ -82,7 +82,7 @@ public class Home extends AppCompatActivity {
         RetrofitClient retrofitClient = new RetrofitClient();
         SharedPreferences sharedPreferences = getSharedPreferences("SaveAccount", Context.MODE_PRIVATE);
         username = sharedPreferences.getString("username", "");
-        username ="thuhien123";
+        username = "thuhien123";
         TakeTopic(retrofitClient,username);
         btnTopicHome.setOnClickListener(new View.OnClickListener() {
             @Override

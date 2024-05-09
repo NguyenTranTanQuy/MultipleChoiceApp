@@ -117,7 +117,7 @@ public class TopicSet extends AppCompatActivity {
                                 duration = topicSet.getDuration();
                                 String time = String.valueOf(duration);
                                 topicSetCode = topicSet.getTopicSetID();
-                                Intent intent = new Intent(TopicSet.this, Exam.class);
+                                Intent intent = new Intent(TopicSet.this, LevelQuestion.class);
                                 intent.putExtra("ID_TOPICSET",topicSetCode);
                                 intent.putExtra("USERNAME", username);
                                 intent.putExtra("DURATION", duration);

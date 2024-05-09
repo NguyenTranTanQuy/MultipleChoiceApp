@@ -2,9 +2,7 @@ package com.example.multiplechoiceapp.activities.Hien;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,7 +10,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 
 import com.example.multiplechoiceapp.R;
 import com.example.multiplechoiceapp.retrofit.Hien.Statistic;
@@ -36,19 +33,17 @@ public class StatisticalActivity extends AppCompatActivity {
     ListView lvDanhSachThongKe;
     Button btnBD;
 
-    private String username;
+    Button btnC;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistical);
-
-        SharedPreferences sharedPreferences = getSharedPreferences("SaveAccount", Context.MODE_PRIVATE);
-        username = sharedPreferences.getString("username", "");
         setControl();
 
-        getStatistic(username, new CallbackMethod() {
+        getStatistic("thuhien123", new CallbackMethod() {
             @Override
             public void onSuccess(String information) {
                 setEvent();
@@ -68,6 +63,14 @@ public class StatisticalActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(StatisticalActivity.this, ChartStatistic.class);
+                startActivity(intent);
+            }
+        });
+        Button btnC = findViewById(R.id.btnC);
+        btnC.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StatisticalActivity.this, PDFStatistical.class);
                 startActivity(intent);
             }
         });
@@ -106,6 +109,7 @@ public class StatisticalActivity extends AppCompatActivity {
     private void setControl() {
         lvDanhSachThongKe = findViewById(R.id.lvDanhSachThongKe);
         btnBD = findViewById(R.id.btnBD);
+        btnC = findViewById(R.id.btnC);
 
     }
 }

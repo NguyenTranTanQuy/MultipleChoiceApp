@@ -38,7 +38,6 @@ public class UpdateUser extends AppCompatActivity {
         if (intent != null) {
             username = intent.getStringExtra("USERNAME");
             name = intent.getStringExtra("NAME");
-            Toast.makeText(UpdateUser.this,name,Toast.LENGTH_SHORT).show();
             email = intent.getStringExtra("EMAIL");
             phone = intent.getStringExtra("PHONE");
 
@@ -93,6 +92,7 @@ public class UpdateUser extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResultResponse> call, Throwable t) {
+                Log.e("onFailue","Erro: "+t.getMessage());
                 Toast.makeText(UpdateUser.this, "onFailure:"+t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

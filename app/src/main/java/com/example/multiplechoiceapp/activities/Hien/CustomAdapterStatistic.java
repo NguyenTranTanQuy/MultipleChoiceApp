@@ -43,29 +43,27 @@ public class CustomAdapterStatistic extends ArrayAdapter {
         TextView tvSoNguoiLam = convertView.findViewById(R.id.tvSoNguoiLam);
         btnCT = convertView.findViewById(R.id.btnXemChiTiet);
 
-        List<String> data = (List) dataList.get(position);
-//        tvMaDe.setText(data.get(0).toString());
-        String defaultTenMon = "Môn: ";
-        tvTenMon.setText(defaultTenMon + data.get(1).toString());
-//        tvTenMon.setText(data.get(1).toString());
-        String defaultSoNguoiLam = "Số người làm bài: ";
-        tvSoNguoiLam.setText(defaultSoNguoiLam + data.get(2).toString());
-//        tvSoNguoiLam.setText(data.get(2).toString());
-
-        int randomNumber = random.nextInt(2);
-        if (randomNumber == 0) {
-            imHinh2.setImageResource(R.drawable.sach5);
-        } else {
-            imHinh2.setImageResource(R.drawable.sach7);
+        Object data = dataList.get(position);
+        if (data instanceof List) {
+            List<Object> innerDataList = (List<Object>) data;
+            tvMaDe.setText(String.valueOf(((Double) innerDataList.get(0)).intValue()));
+            String defaultTenMon = "Môn: ";
+            tvTenMon.setText(defaultTenMon + String.valueOf(innerDataList.get(1)));
+            String defaultSoNguoiLam = "Số người làm bài: ";
+            tvSoNguoiLam.setText(defaultSoNguoiLam + String.valueOf(innerDataList.get(2)));
+            int randomNumber = random.nextInt(2);
+            if (randomNumber == 0) {
+                imHinh2.setImageResource(R.drawable.sach5);
+            } else {
+                imHinh2.setImageResource(R.drawable.sach7);
+            }
         }
 
         btnCT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<String> data = (List<String>) dataList.get(position);
-                String maDe = data.get(0); // Mã đề
-
-                // Tạo Intent và truyền mã đề sang RatingsActivity
+                List<Object> data = (List<Object>) dataList.get(position);
+                String maDe = String.valueOf(data.get(0)); // Mã đề
                 Intent intent = new Intent(context, RatingsActivity.class);
                 intent.putExtra("MaDe", maDe); // Truyền mã đề
                 context.startActivity(intent);
@@ -77,5 +75,15 @@ public class CustomAdapterStatistic extends ArrayAdapter {
 
     public static List<Object> getDataList() {
         return dataList;
+    }
+
+    // Phương thức kiểm tra xem một chuỗi có phải là số hay không
+    private boolean isNumeric(String str) {
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch(NumberFormatException e) {
+            return false;
+        }
     }
 }

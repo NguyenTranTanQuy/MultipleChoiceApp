@@ -36,9 +36,14 @@ public class ChartStatistic extends AppCompatActivity {
         // Tạo danh sách các thanh cột
         List<BarEntry> entries = new ArrayList<>();
         for (int i = 0; i < dataList.size(); i++) {
-            List<String> data = (List<String>) dataList.get(i);
-            float value = Float.parseFloat(data.get(2));
-            entries.add(new BarEntry(i, value));
+            Object data = dataList.get(i);
+            if (data instanceof List) {
+                List<Object> innerDataList = (List<Object>) data;
+                String valueStr = String.valueOf(innerDataList.get(2));
+                valueStr = valueStr.replace(",", "."); // Thay thế dấu phẩy bằng dấu chấm
+                float value = Float.parseFloat(valueStr);
+                entries.add(new BarEntry(i, value));
+            }
         }
 
         // Tạo danh sách màu sắc cho các thanh cột
@@ -46,11 +51,11 @@ public class ChartStatistic extends AppCompatActivity {
                 Color.rgb(255, 102, 0), // Cam
                 Color.rgb(51, 153, 255), // Xanh dương
                 Color.rgb(255, 204, 51), //Vàng
-               // Color.rgb(255, 0, 0),
                 // Thêm các màu khác nếu cần
         };
+
         Description description = new Description();
-        description.setEnabled(false); // Vô hiệu hóa tiêu đề mặc định của biểu đồ
+        description.setEnabled(false);
         barChart.setDescription(description);
 
         // Tạo dataset và đặt giá trị cho biểu đồ cột, gán màu sắc cho từng thanh cột
@@ -69,21 +74,21 @@ public class ChartStatistic extends AppCompatActivity {
             public String getFormattedValue(float value) {
                 int index = (int) value;
                 if (index >= 0 && index < dataList.size()) {
-                    List<String> data = (List<String>) dataList.get(index);
- //                   return data.get(0); // Mã đề
+                    List<Object> innerDataList = (List<Object>) dataList.get(index);
+                    return String.valueOf(((Double) innerDataList.get(0)).intValue()); // Mã đề
                 }
-                return ""; // Trả về chuỗi trống nếu không có dữ liệu phù hợp
+                return "";
             }
         });
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setAxisLineColor(Color.BLACK);
         xAxis.setAxisLineWidth(2f);
         xAxis.setGranularity(1f);
-        xAxis.setLabelRotationAngle(45); // Giảm góc quay để tránh chồng chéo
-        xAxis.setTextSize(15f); // Đặt kích thước chữ cho trục X
-        xAxis.setTextColor(Color.BLACK); // Đặt màu chữ cho trục X
+        //xAxis.setLabelRotationAngle(45);
+        xAxis.setTextSize(15f);
+        xAxis.setTextColor(Color.BLACK);
 
-// Tùy chỉnh trục Y
+        // Tùy chỉnh trục Y
         YAxis leftAxis = barChart.getAxisLeft();
         leftAxis.setAxisMinimum(0f);
         leftAxis.setAxisLineColor(Color.BLACK);
@@ -92,10 +97,6 @@ public class ChartStatistic extends AppCompatActivity {
         leftAxis.setTextColor(Color.BLACK);
         leftAxis.setAxisLineWidth(2f);
         leftAxis.setTextSize(20f);
-
-// Vẽ biểu đồ
-        barChart.setData(new BarData(dataSet));
-        barChart.invalidate();
 
         // Vẽ biểu đồ
         barChart.setData(new BarData(dataSet));

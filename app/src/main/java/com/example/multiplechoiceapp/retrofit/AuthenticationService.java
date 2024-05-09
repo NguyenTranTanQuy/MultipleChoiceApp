@@ -54,6 +54,15 @@ public interface AuthenticationService {
     Call<List<Question>> getQuestion(
             @Path("topic_set_code") Long topicSetID
     );
+    @GET("question/findQuestion")
+    Call<List<Question>> getQuestionByLevel(
+            @Query("topicSetID") Long topicSetID,
+            @Query("level") int level
+    );
+    @GET("question/levels")
+    Call<List<Integer>> getListLevel(
+            @Query("topicSetID") Long topicSetID
+    );
 
     //Exam v
     @GET("selection/{questionCode}")

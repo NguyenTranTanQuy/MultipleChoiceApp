@@ -1,6 +1,7 @@
 
 
 
+
 package com.example.multiplechoiceapp.activities.THien;
 
 import android.content.Context;
@@ -56,11 +57,13 @@ public class Exam extends AppCompatActivity {
     private List<String> myList = new ArrayList<>();
     private List<Long> myQuestionCode= new ArrayList<>();
     private List<Integer> questionIndex = new ArrayList<>();
+    private List<Integer> ListIndex = new ArrayList<>();
     private CustomAdapterSelection customAdapterSelection;
     private ArrayAdapter<String> adapter;
     private Long topicSetCode = null;
     private Long assID = 0L;
     private String Username = "";
+    private int level;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,11 +110,12 @@ public class Exam extends AppCompatActivity {
             duration = intent.getFloatExtra("DURATION",0);
             Username = intent.getStringExtra("USERNAME");
             topicSetCode = intent.getLongExtra("ID_TOPICSET",0);
+            level = intent.getIntExtra("LEVEL",0);
         }
         int timee = Math.round(duration);
         time = timee*60*1000;
         RetrofitClient retrofitClient = new RetrofitClient();
-        getQuestion(retrofitClient,topicSetCode);
+        getQuestion(retrofitClient,topicSetCode,level);
         btnAfterExam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,11 +132,11 @@ public class Exam extends AppCompatActivity {
                 }
                 int selectionPosition = adapter.getPosition("List Question");
                 snListQuestion.setSelection(selectionPosition);
-                int t = questionIndex.get(index);
-                if(t>=0&&t<=myList.size()){
-                    Long code = myQuestionCode.get(t);
-                    getSelection(retrofitClient,code);
-                }
+                //int t = questionIndex.get(index);
+                int t = ListIndex.get(index);
+                Long code = myQuestionCode.get(t);
+                //Long code = myQuestionCode.get(t-1);
+                getSelection(retrofitClient,code);
 
             }
         });
@@ -149,7 +153,9 @@ public class Exam extends AppCompatActivity {
                 }
                 int selectionPosition = adapter.getPosition("List Question");
                 snListQuestion.setSelection(selectionPosition);
-                int t = questionIndex.get(index);
+//                int t = questionIndex.get(index);
+//                Long code = myQuestionCode.get(t-1);
+                int t = ListIndex.get(index);
                 Long code = myQuestionCode.get(t);
                 getSelection(retrofitClient,code);
 
@@ -200,14 +206,13 @@ public class Exam extends AppCompatActivity {
                 }
                 List<String> listDA = new ArrayList<>();
                 for(int j=0;j<myList.size();j++){
-                    int d = questionIndex.get(j);
+                    int d = ListIndex.get(j);
                     listDA.add(lessonAnswer.get(d));
                 }
 
                 Float diem = 0F;
                 int socau = 0;
                 for (int j =0;j<myList.size();j++){
-                    int d = questionIndex.get(j);
                     if(myList.get(j).equals(listDA.get(j))){
                         socau ++;
                     }
@@ -284,7 +289,11 @@ public class Exam extends AppCompatActivity {
                         else{
                             btnBeforeExam.setEnabled(true);
                         }
-                        int t = questionIndex.get(i);
+//                        int t = questionIndex.get(i);
+//                        Long code = myQuestionCode.get(t-1);
+//                        int t = ListIndex.get(index);
+//                        Long code = myQuestionCode.get(t);
+                        int t = ListIndex.get(index);
                         Long code = myQuestionCode.get(t);
                         getSelection(retrofitClient,code);
                         index = position -1;
@@ -317,7 +326,7 @@ public class Exam extends AppCompatActivity {
                     Object assignmentID = resultResponse.getData();
                     assID = Long.parseLong(assignmentID.toString().split("\\.")[0]);
                     for(int j = 0;j<myList.size();j++){
-                        Long t = Long.valueOf(questionIndex.get(j)+1);
+                        Long t = Long.valueOf(questionIndex.get(j));
                         add_DetailAssignment(assID, t, myList.get(j),new CallbackMethod() {
                             @Override
                             public void onSuccess(String information) {
@@ -406,8 +415,8 @@ public class Exam extends AppCompatActivity {
     }
 
 
-    public void getQuestion(RetrofitClient retrofitClient, Long topicSetCode){
-        retrofitClient.getQuestion(topicSetCode, new Callback<List<Question>>() {
+    public void getQuestion(RetrofitClient retrofitClient, Long topicSetCode, int level){
+        retrofitClient.getQuestionByLevel(topicSetCode,level, new Callback<List<Question>>() {
             @Override
             public void onResponse(Call<List<Question>> call, Response<List<Question>> response) {
                 if (response.isSuccessful()) {
@@ -432,19 +441,33 @@ public class Exam extends AppCompatActivity {
                         //********************
 
                         Random random = new Random();
-                        long[] randomNumbers = new long[myQuestionCode.size()]; // Sửa kích thước mảng
+
+                        // Khởi tạo mảng chứa số ngẫu nhiên cho mỗi question
+                        long[] randomNumbers = new long[myQuestionCode.size()];
+
+                        // Đưa questionIndex và ListIndex vào mảng
                         for (int i = 0; i < myQuestionCode.size(); i++) {
-                            //randomNumbers[i] = myQuestionCode.get(i);
-                            randomNumbers[i] = i;
+                            randomNumbers[i] = myQuestionCode.get(i);
                         }
+                        // Sắp xếp lại một lần nữa
                         for (int i = randomNumbers.length - 1; i > 0; i--) {
                             int index = random.nextInt(i + 1);
                             long temp = randomNumbers[index];
                             randomNumbers[index] = randomNumbers[i];
                             randomNumbers[i] = temp;
                         }
+
+                        // Thêm questionIndex đã được random vào danh sách
                         for(long num : randomNumbers){
-                            questionIndex.add(Integer.valueOf((int) num));
+                            questionIndex.add((int)num);
+                        }
+                        // Sắp xếp theo randomNumbers
+                        for (int i = 0; i < questionIndex.size(); i++) {
+                            for (int k = 0; k < questionIndex.size(); k++) {
+                                if (Long.valueOf(questionIndex.get(i))==myQuestionCode.get(k)) {
+                                    ListIndex.add(k);
+                                }
+                            }
                         }
                         //*********************
                         adapter = new ArrayAdapter<>(Exam.this,android.R.layout.simple_spinner_item, selec);
@@ -453,7 +476,7 @@ public class Exam extends AppCompatActivity {
                         int selectionPosition = adapter.getPosition("List Question");
                         snListQuestion.setSelection(selectionPosition);
                         if(myQuestionCode.size()>0){
-                            int t = questionIndex.get(index);
+                            int t = ListIndex.get(index);
                             Long code = myQuestionCode.get(t);
                             getSelection(retrofitClient, code);
                         }
@@ -480,7 +503,8 @@ public class Exam extends AppCompatActivity {
                     List<Selection> selections = response.body();
                     String t = "Câu "+(index+1)+"/"+myList.size();
                     txtSentence.setText(t);
-                    txtContextExam.setText(myQuestion.get(questionsCode.intValue()-1));
+                    txtContextExam.setText(myQuestion.get(ListIndex.get(index)));
+                    txtContextExam.setText(myQuestion.get(ListIndex.get(index)));
                     if (selections != null) {
                         customAdapterSelection = new CustomAdapterSelection(Exam.this, R.layout.layout_list_question, selections);
                         lvDanhsach.setAdapter(customAdapterSelection);
@@ -516,3 +540,4 @@ public class Exam extends AppCompatActivity {
 
     }
 }
+

@@ -1,6 +1,5 @@
 
 
-
 package com.example.multiplechoiceapp.activities.THien;
 
 import android.content.Intent;
@@ -145,6 +144,7 @@ public class ExamAgain extends AppCompatActivity {
                 intent.putExtra("DIEM",diem);
                 intent.putExtra("SO_CAUTL",socau);
                 intent.putExtra("SO_CAUH",myList.size());
+                intent.putExtra("USERNAME",Username);
                 intent.putExtra("DAP_AN",dapanCH);
                 intent.putExtra("THOI_GIAN",thoigian);
                 intent.putExtra("DURATION",duration);
@@ -217,9 +217,9 @@ public class ExamAgain extends AppCompatActivity {
                         String[] numbers = input.split(",");
                         StringBuilder result = new StringBuilder();
                         for (String number : numbers) {
-                            char letter = number.charAt(0);
-                            int num = (int) (letter - 'A' + 1);
-                            char convertedChar = (char) ('1' + num - 1);
+                            char letter = number.charAt(0); // Lấy ký tự từ chuỗi số
+                            int num = (int) (letter - 'A' + 1); // Chuyển chữ cái thành số tương ứng ('A' là 1, 'B' là 2, v.v.)
+                            char convertedChar = (char) ('1' + num - 1); // Chuyển số thành ký tự tương ứng ('1' tương ứng với số 1)
                             result.append(convertedChar);
                         }
                         String dapan = result.toString();

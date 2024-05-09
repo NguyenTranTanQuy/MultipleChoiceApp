@@ -16,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     private static Retrofit retrofit = null;
-    private static String baseURL = "http://192.168.1.13:8080/api/v1/";
+    private static String baseURL = "http://192.168.20.12:8080/api/v1/";
 
     public static Retrofit getClient() {
         if (retrofit==null) {
@@ -31,6 +31,16 @@ public class RetrofitClient {
     public void getQuestion(Long topicSetCode, Callback<List<Question>> callback) {
         AuthenticationService authenticationService = getClient().create(AuthenticationService.class);
         Call<List<Question>> call = authenticationService.getQuestion(topicSetCode);
+        call.enqueue(callback);
+    }
+    public void getQuestionByLevel(Long topicSetCode,int level, Callback<List<Question>> callback) {
+        AuthenticationService authenticationService = getClient().create(AuthenticationService.class);
+        Call<List<Question>> call = authenticationService.getQuestionByLevel(topicSetCode,level);
+        call.enqueue(callback);
+    }
+    public void getListLevel(Long topicSetCode, Callback<List<Integer>> callback) {
+        AuthenticationService authenticationService = getClient().create(AuthenticationService.class);
+        Call<List<Integer>> call = authenticationService.getListLevel(topicSetCode);
         call.enqueue(callback);
     }
     public void getSelection(Long questionCode, Callback<List<Selection>> callback) {
